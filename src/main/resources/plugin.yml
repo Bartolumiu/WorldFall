@@ -1,0 +1,45 @@
+name: WorldFall
+version: '${project.version}'
+main: dev.tr25.worldfall.WorldFall
+api-version: '1.20'
+authors:
+  - TR25
+website: https://worldfall.tr25.es
+commands:
+  worldfall:
+    description: Main command for WorldFall
+    aliases:
+      - wf
+    usage: /worldfall
+permissions:
+  wf:
+    default: op
+    description: Main permission node
+    children:
+      wf.action:
+        default: op
+        description: Status related permission node
+        children:
+          wf.action.start:
+            default: op
+            description: Start WorldFall
+          wf.action.stop:
+            default: op
+            description: Stop WorldFall
+      wf.config:
+        default: op
+        description: Configuration related permission node
+        children:
+          wf.config.scoreboard:
+            default: op
+            description: Sidebar control
+            children:
+              wf.config.scoreboard.enable:
+                default: op
+                description: Enable sidebar
+              wf.config.scoreboard.disable:
+                default: op
+                description: Disable sidebar
+          wf.config.reload:
+            default: op
+            description: WorldFall config reload

@@ -1,0 +1,10 @@
+scoreboard:
+  enabled: true
+  ticks: 20
+  title: "WorldFall"
+  text:
+    - "Player: %player_name%"
+    - ""
+    - "X: %coord_x%"
+    - "Y: %coord_y%"
+    - "Z: %coord_z%"

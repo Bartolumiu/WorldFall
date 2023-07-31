@@ -29,102 +29,103 @@ public class MainWF implements CommandExecutor, TabCompleter {
         } else {
             Player player = (Player) commandSender;
             Object[] onlinePlayers = Bukkit.getOnlinePlayers().toArray();
-            
-            /* Command has arguments */
-            if (strings.length > 0) {
-                if (strings[0].equalsIgnoreCase("cmd")) {
-                    player.sendMessage("§6---------------------------------");
-                    player.sendMessage("§aCommand List");
-                    player.sendMessage("§6/worldfall§a: Main Command");
-                    player.sendMessage("§6/worldfall cmd§a: Displays this list");
-                    if (player.hasPermission("wf.config.reload")) player.sendMessage("§6/worldfall reload§a: Reloads the plugin config");
-                    player.sendMessage("§6/worldfall version§a: Get the plugin version");
-                    player.sendMessage("§6/worldfall status§a: Check WorldFall status");
-                    if (player.hasPermission("wf.action.start")) player.sendMessage("§6/worldfall start§a: Starts WorldFall");
-                    if (player.hasPermission("wf.action.stop")) player.sendMessage("§6/worldfall stop§a: Stops WorldFall");
-                    if (player.hasPermission("wf.config.scoreboard.enable")) player.sendMessage("§6/worldfall scoreboard enable§a: Enables the sidebar");
-                    if (player.hasPermission("wf.config.scoreboard.disable")) player.sendMessage("§6/worldfall scoreboard disable§a: Disables the sidebar");
-                    player.sendMessage("§6---------------------------------");
-                } else if (strings[0].equalsIgnoreCase("version")) {
-                    player.sendMessage(wfr.pluginPrefix + "WorldFall for Spigot (version " + wfr.version + ")");
-                } else if (strings[0].equalsIgnoreCase("status")) {
-                    player.sendMessage(wfr.pluginPrefix + "WorldFall Status: §6" + (wfr.wfActive ? "ACTIVE" : "INACTIVE"));
-                } else if (strings[0].equalsIgnoreCase("start")) {
-                    if (player.hasPermission("wf.action.start")) {
-                        if (wfr.wfStarted()) {
-                            player.sendMessage(wfr.pluginPrefix + "§6WorldFall already started!");
-                        } else {
-                            for (Object eachplayer : onlinePlayers) {
-                                ((Player) eachplayer).setGameMode(GameMode.SURVIVAL);
-                            }
-                            wfr.wfActive = true;
-                            player.sendMessage(wfr.pluginPrefix + "§aWorldFall started!");
-                        }
-                    } else {
-                        player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
-                    }
-                } else if (strings[0].equalsIgnoreCase("stop")) {
-                    if (player.hasPermission("wf.action.stop")) {
-                        if (!(wfr.wfStarted())) {
-                            player.sendMessage(wfr.pluginPrefix + "§4WorldFall not active. Use §b/worldfall start §4to start.");
-                        } else {
-                            for (Object onlinePlayer : onlinePlayers) {
-                                ((Player) onlinePlayer).setGameMode(GameMode.ADVENTURE);
-                            }
-                            wfr.wfActive = false;
-                            player.sendMessage(wfr.pluginPrefix + "§aWorldFall stopped!");
-                        }
-                    } else {
-                        player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
-                    }
-                } else if (strings[0].equalsIgnoreCase("reload")) {
-                    if (player.hasPermission("wf.config.reload")) {
-                        player.sendMessage(wfr.pluginPrefix + "Reloading WorldFall config");
-                        wfr.reloadConfig();
-                        player.sendMessage(wfr.pluginPrefix + "Config reloaded!");
-                    } else {
-                        player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
-                    }
-                } else if (strings[0].equalsIgnoreCase("scoreboard")) {
-                    if (strings[1].equalsIgnoreCase("enable")) {
-                        if (player.hasPermission("wf.config.scoreboard.enable")) {
-                            if (wfr.getConfig().getBoolean("scoreboard.enabled")) {
-                                player.sendMessage(wfr.pluginPrefix + "§6Scoreboard already active! Use §b/worldfall scoreboard disable §6to disable it or change the plugin config.");
-                            } else {
-                                wfr.getConfig().set("scoreboard.enabled", true);
-                                wfr.saveConfig();
-                                player.sendMessage(wfr.pluginPrefix + "§aScoreboard enabled!");
-                            }
-                        } else {
-                            player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
-                        }
-                    } else if (strings[1].equalsIgnoreCase("disable")) {
-                        if (player.hasPermission("wf.config.scoreboard.disable")) {
-                            if (!wfr.getConfig().getBoolean("scoreboard.enabled")) {
-                                player.sendMessage(wfr.pluginPrefix + "§4Scoreboard not active. Use §b/worldfall scoreboard enable §4to enable it or change the plugin config.");
-                            } else {
-                                wfr.getConfig().set("scoreboard.enabled", false);
-                                wfr.saveConfig();
-                                player.sendMessage(wfr.pluginPrefix + "§aScoreboard disabled!");
-                            }
-                        } else {
-                            player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
-                        }
-                    } else {
-                        player.sendMessage(wfr.pluginPrefix + "§4Wrong command. Use §6/worldfall cmd §4for command list");
-                    }
-                } else if (strings[0].equalsIgnoreCase("test")) {
-                    player.sendMessage(player.getEffectivePermissions().toString());
-                } else {
-                    player.sendMessage(wfr.pluginPrefix+"§4Wrong command. Use §6/worldfall cmd §4for command list");
-                }
+
+            if (strings.length == 0) {
+                player.sendMessage("§6---------------------------------", "§6§lWorldFall §aplugin by TR25", "§aVersion: §b"+wfr.version, "§aUse §b/worldfall cmd §ato see the command list", "§aAliases: §b/wf", "§6---------------------------------");
             } else {
-                player.sendMessage("§6---------------------------------");
-                player.sendMessage("§6§lWorldFall §aplugin by TR25");
-                player.sendMessage("§aVersion: §b"+wfr.version);
-                player.sendMessage("§aUse §b/worldfall cmd §ato see the command list");
-                player.sendMessage("§aAliases: §b/wf");
-                player.sendMessage("§6---------------------------------");
+                switch (strings[0]) {
+                    case "cmd":
+                        player.sendMessage("§6---------------------------------", "§aCommand List", "§6/worldfall§a: Main Command", "§6/worldfall cmd§a: Displays this list");
+                        if (player.hasPermission("wf.config.reload")) player.sendMessage("§6/worldfall reload§a: Reloads the plugin config");
+                        player.sendMessage("§6/worldfall version§a: Get the plugin version", "§6/worldfall status§a: Check WorldFall status");
+                        if (player.hasPermission("wf.action.start")) player.sendMessage("§6/worldfall start§a: Starts WorldFall");
+                        if (player.hasPermission("wf.action.stop")) player.sendMessage("§6/worldfall stop§a: Stops WorldFall");
+                        if (player.hasPermission("wf.config.scoreboard.enable")) player.sendMessage("§6/worldfall scoreboard enable§a: Enables the sidebar");
+                        if (player.hasPermission("wf.config.scoreboard.disable")) player.sendMessage("§6/worldfall scoreboard disable§a: Disables the sidebar");
+                        player.sendMessage("§6---------------------------------");
+                        break;
+                    case "version":
+                        player.sendMessage(wfr.pluginPrefix + "WorldFall for Paper (version " + wfr.version + ")");
+                        break;
+                    case "status":
+                        player.sendMessage(wfr.pluginPrefix + "WorldFall Status: " + (wfr.wfActive ? "§a§lACTIVE" : "§c§lINACTIVE"));
+                        break;
+                    case "start":
+                        if (player.hasPermission("wf.action.start")) {
+                            if (wfr.wfStarted()) {
+                                player.sendMessage(wfr.pluginPrefix + "§6WorldFall already started!");
+                            } else {
+                                for (Object onlinePlayer : onlinePlayers) {
+                                    ((Player) onlinePlayer).setGameMode(GameMode.SURVIVAL);
+                                }
+                                wfr.wfActive = true;
+                                player.sendMessage(wfr.pluginPrefix + "§aWorldFall started!");
+                            }
+                        } else {
+                            player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
+                        }
+                        break;
+                    case "stop":
+                        if (player.hasPermission("wf.action.stop")) {
+                            if (!(wfr.wfStarted())) {
+                                player.sendMessage(wfr.pluginPrefix + "§4WorldFall not active. Use §b/worldfall start §4to start.");
+                            } else {
+                                for (Object onlinePlayer : onlinePlayers) {
+                                    ((Player) onlinePlayer).setGameMode(GameMode.ADVENTURE);
+                                }
+                                wfr.wfActive = false;
+                                player.sendMessage(wfr.pluginPrefix + "§aWorldFall stopped!");
+                            }
+                        } else {
+                            player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
+                        }
+                        break;
+                    case "reload":
+                        if (player.hasPermission("wf.config.reload")) {
+                            player.sendMessage(wfr.pluginPrefix + "Reloading WorldFall config");
+                            wfr.reloadConfig();
+                            player.sendMessage(wfr.pluginPrefix + "Config reloaded!");
+                        } else {
+                            player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
+                        }
+                        break;
+                    case "scoreboard":
+                        switch (strings[1]) {
+                            case "enable":
+                                if (player.hasPermission("wf.config.scoreboard.enable")) {
+                                    if (wfr.getConfig().getBoolean("scoreboard.enabled")) {
+                                        player.sendMessage(wfr.pluginPrefix + "§6Scoreboard already active! Use §b/worldfall scoreboard disable §6to disable it or change the plugin config.");
+                                    } else {
+                                        wfr.getConfig().set("scoreboard.enabled", true);
+                                        wfr.saveConfig();
+                                        player.sendMessage(wfr.pluginPrefix + "§aScoreboard enabled!");
+                                    }
+                                } else {
+                                    player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
+                                }
+                                break;
+                            case "disable":
+                                if (player.hasPermission("wf.config.scoreboard.disable")) {
+                                    if (!wfr.getConfig().getBoolean("scoreboard.enabled")) {
+                                        player.sendMessage(wfr.pluginPrefix + "§4Scoreboard not active. Use §b/worldfall scoreboard enable §4to enable it or change the plugin config.");
+                                    } else {
+                                        wfr.getConfig().set("scoreboard.enabled", false);
+                                        wfr.saveConfig();
+                                        player.sendMessage(wfr.pluginPrefix + "§aScoreboard disabled!");
+                                    }
+                                } else {
+                                    player.sendMessage(wfr.pluginPrefix + "§4You have no permission to use this command.");
+                                }
+                                break;
+                            default:
+                                player.sendMessage(wfr.pluginPrefix + "§4Wrong command. Use §6/worldfall cmd §4for command list");
+                                break;
+                        }
+                        break;
+                    default:
+                        player.sendMessage(wfr.pluginPrefix + "§4Wrong command. Use §6/worldfall cmd §4for command list");
+                        break;
+                }
             }
             return true;
         }
@@ -132,28 +133,24 @@ public class MainWF implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        List<String> subcommands = null;
-        List<String> secondSubcommands = null;
-
-        if (strings.length == 1) {
-            subcommands = new ArrayList<>();
-            subcommands.add("cmd");
-            subcommands.add("version");
-            subcommands.add("status");
-            if (commandSender.hasPermission("wf.action.start")) subcommands.add("start");
-            if (commandSender.hasPermission("wf.action.stop")) subcommands.add("stop");
-            if (commandSender.hasPermission("wf.config.reload")) subcommands.add("reload");
-            if (commandSender.hasPermission("wf.config.scoreboard.enable") || commandSender.hasPermission("wf.config.scoreboard.disable")) subcommands.add("scoreboard");
-        } else if (strings.length == 2) {
-            secondSubcommands = new ArrayList<>();
-            if (commandSender.hasPermission("wf.config.scoreboard.enable")) secondSubcommands.add("enable");
-            if (commandSender.hasPermission("wf.config.scoreboard.disable")) secondSubcommands.add("disable");
-        }
+        List<String> subcommands;
+        List<String> secondSubcommands;
 
         switch (strings.length) {
             case 1:
+                subcommands = new ArrayList<>();
+                subcommands.add("cmd");
+                subcommands.add("version");
+                subcommands.add("status");
+                if (commandSender.hasPermission("wf.action.start")) subcommands.add("start");
+                if (commandSender.hasPermission("wf.action.stop")) subcommands.add("stop");
+                if (commandSender.hasPermission("wf.config.reload")) subcommands.add("reload");
+                if (commandSender.hasPermission("wf.config.scoreboard.enable") || commandSender.hasPermission("wf.config.scoreboard.disable")) subcommands.add("scoreboard");
                 return subcommands;
             case 2:
+                secondSubcommands = new ArrayList<>();
+                if (commandSender.hasPermission("wf.config.scoreboard.enable")) secondSubcommands.add("enable");
+                if (commandSender.hasPermission("wf.config.scoreboard.disable")) secondSubcommands.add("disable");
                 return secondSubcommands;
             default:
                 return null;

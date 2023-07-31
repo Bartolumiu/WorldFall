@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class PlayerEvent implements Listener {
     private final WorldFall wfr;
-    HashMap<String, Boolean> playerHasMoved = new HashMap<String, Boolean>();
+    final HashMap<String, Boolean> playerHasMoved = new HashMap<>();
 
     /**
      * Constructor for PlayerEvent class
@@ -45,7 +45,7 @@ public class PlayerEvent implements Listener {
         String name = getPlayerName(event.getPlayer());
 
         /* WorldFall active in the server */
-        if (wfr.wfActive) {
+        if (wfr.wfStarted()) {
             Location from = event.getFrom();
             Location to = event.getTo();
 
@@ -60,7 +60,7 @@ public class PlayerEvent implements Listener {
 
             /* Player changed position */
             if (hasMoved) {
-                if (playerHasMoved.get(name) & event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+                if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
                     World world = event.getPlayer().getWorld();
                     for (int i = -64; i < 320; i++) {
                         Block block = world.getBlockAt(fromX, i, fromZ);

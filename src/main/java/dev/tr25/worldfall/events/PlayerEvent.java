@@ -3,10 +3,7 @@ package dev.tr25.worldfall.events;
 import dev.tr25.worldfall.WorldFall;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +16,7 @@ import java.util.HashMap;
 
 public class PlayerEvent implements Listener {
     private final WorldFall wfr;
-    HashMap<String, Boolean> playerHasMoved = new HashMap<String, Boolean>();
+    HashMap<String, Boolean> playerHasMoved = new HashMap<>();
 
     /**
      * Constructor for PlayerEvent class
@@ -46,23 +43,18 @@ public class PlayerEvent implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         String name = getPlayerName(event.getPlayer());
-
         /* WorldFall active in the server */
-        if (wfr.wfActive) {
-            Location from = event.getFrom();
-            Location to = event.getTo();
+        if (wfr.wfStarted()) {
+            int fromX = event.getFrom().getBlockX();
+            int fromZ = event.getFrom().getBlockZ();
 
-            int fromX = from.getBlockX();
-            int fromZ = from.getBlockZ();
-
-            int toX = to.getBlockX();
-            int toZ = to.getBlockZ();
-
+            int toX = event.getTo().getBlockX();
+            int toZ = event.getTo().getBlockZ();
             boolean hasMoved = (fromX != toX) | (fromZ != toZ);
 
             /* Player changed position */
             if (hasMoved) {
-                if (playerHasMoved.get(name) & event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+                if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
                     World world = event.getPlayer().getWorld();
                     for (int i = -64; i < 320; i++) {
                         Block block = world.getBlockAt(fromX, i, fromZ);

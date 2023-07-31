@@ -14,10 +14,10 @@ import java.io.File;
 
 public final class WorldFall extends JavaPlugin {
     public String configPath;
-    PluginMeta pdf = getPluginMeta();
-    public String version = pdf.getVersion();
-    public String pluginName = pdf.getName();
-    public String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&k[&r&6&l"+pluginName+"&f&k]&r ");
+    final PluginMeta pdf = getPluginMeta();
+    public final String version = pdf.getVersion();
+    public final String pluginName = pdf.getName();
+    public final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&k[&r&6&l"+pluginName+"&f&k]&r ");
     public boolean wfActive = false;
 
     @Override
@@ -44,7 +44,7 @@ public final class WorldFall extends JavaPlugin {
         configRegister();
 
         WFScoreboard wfScoreboard = new WFScoreboard(this);
-        wfScoreboard.createScoreboard(Integer.valueOf(getConfig().getString("scoreboard.ticks")));
+        wfScoreboard.createScoreboard(Integer.parseInt(getConfig().getString("scoreboard.ticks")));
     }
 
     @Override

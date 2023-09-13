@@ -11,6 +11,14 @@ Every time a player in survival mode moves to another block, the previous column
 
 - [@Bartolumiu](https://www.github.com/Bartolumiu)
 
+## Versions
+- [Paper](https://github.com/Bartolumiu/WorldFall/tree/paper)
+- [Spigot](https://github.com/Bartolumiu/WorldFall/tree/spigot)
+
+## Website
+
+WorldFall Project website available at [https://worldfall.tr25.es](https://worldfall.tr25.es)
+
 ## Acknowledgements
 
 This plugin is based on the custom datapack from the following video:

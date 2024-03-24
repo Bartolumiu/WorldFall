@@ -23,8 +23,8 @@ public final class WorldFall extends JavaPlugin {
     @Override
     public void onEnable() {
         // bStats connection
-        int pluginId = 19126;
-        Metrics metrics = new Metrics(this, pluginId);
+        int pluginID = 19126;
+        Metrics metrics = new Metrics(this, pluginID);
 
         // Plugin startup logic
         Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
@@ -34,17 +34,46 @@ public final class WorldFall extends JavaPlugin {
         Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
         PluginManager manager = Bukkit.getServer().getPluginManager();
 
-        Bukkit.getLogger().info(pluginPrefix+"Loading commands.");
+        // Register commands and events
+        Bukkit.getLogger().info(pluginName+" > Loading commands.");
         commandRegister();
 
-        Bukkit.getLogger().info(pluginPrefix+"Loading events.");
+        Bukkit.getLogger().info(pluginName+" > Loading events.");
         manager.registerEvents(new PlayerEvent(this), this);
 
-        Bukkit.getLogger().info(pluginPrefix+"Loading config.");
+        // Load config
+        Bukkit.getLogger().info(pluginName+" > Loading config.");
         configRegister();
 
+        // Load scoreboard
         WFScoreboard wfScoreboard = new WFScoreboard(this);
-        wfScoreboard.createScoreboard(Integer.parseInt(getConfig().getString("scoreboard.ticks")));
+        String ticksString = getConfig().getString("scoreboard.ticks");
+        if (ticksString == null) {
+            Bukkit.getLogger().info(pluginName+" > Scoreboard ticks not found in config.yml. Using default value.");
+            getConfig().set("scoreboard.ticks", 20);
+            saveConfig();
+            wfScoreboard.createScoreboard(20);
+        } else {
+            int ticks = Integer.parseInt(ticksString);
+            wfScoreboard.createScoreboard(ticks);
+        }
+
+        // Check for updates
+        Bukkit.getLogger().info(pluginName+" > Checking for updates...");
+        try {
+            UpdateCheck update = new UpdateCheck(this);
+            if (update.isUpdateAvailable("paper")) {
+                Bukkit.getLogger().info(pluginName+" > An update is available in Modrinth!");
+            } else Bukkit.getLogger().info(pluginName+" > No updates available. You are using the latest version.");
+        } catch (Exception e) {
+            Bukkit.getLogger().info(pluginName+" > An error occurred while checking for updates.");
+            Bukkit.getLogger().info(pluginName+" > Please check your internet connection or check manually in the following URL:");
+            Bukkit.getLogger().info(pluginName+" > https://modrinth.com/plugin/WorldFall");
+            e.printStackTrace();
+        }
+
+        // Notify that the plugin has been loaded successfully
+        Bukkit.getLogger().info(pluginName+" > Plugin loaded successfully!");
     }
 
     @Override

@@ -14,7 +14,7 @@ Every time a player in survival mode moves to another block, the previous column
 ## Acknowledgements
 
 This plugin is based on the custom datapack from the following video:
- - ["Minecraft, But The World FALLS Behind Me"](https://www.youtube.com/watch?v=wlpbpwA5-nA)
+- ["Minecraft, But The World FALLS Behind Me"](https://www.youtube.com/watch?v=wlpbpwA5-nA)
 
 ## Documentation
 
@@ -24,4 +24,3 @@ For command, placeholder and permission info, head to the [project wiki](https:/
 ## Support
 
 For technical support, go to the [issues page](https://github.com/Bartolumiu/WorldFall/issues) on GitHub.
-

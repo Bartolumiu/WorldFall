@@ -26,6 +26,9 @@ permissions:
           wf.action.stop:
             default: op
             description: Stop WorldFall
+          wf.action.tp:
+            default: op
+            description: Teleport all players to oneself
       wf.config:
         default: op
         description: Configuration related permission node

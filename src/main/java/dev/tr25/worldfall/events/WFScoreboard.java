@@ -22,10 +22,10 @@ public class WFScoreboard {
     public void createScoreboard (int tickReload) {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         taskID = scheduler.scheduleSyncRepeatingTask(wfr, () -> {
-                FileConfiguration config = wfr.getConfig();
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    updateScoreboard(player, config);
-                }
+            FileConfiguration config = wfr.getConfig();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                updateScoreboard(player, config);
+            }
         }, 0, tickReload);
     }
 

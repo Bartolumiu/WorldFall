@@ -88,6 +88,23 @@ public class PlayerEvent implements Listener {
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        // Check if plugin is active
+        if (wfr.wfStarted()) {
+            // Check if player is not in survival mode
+            if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+                // Notify player that they are not in survival mode
+                event.getPlayer().sendMessage(wfr.pluginPrefix + "&6You are not in survival mode. &cWorldFall &6will not work for you.");
+                event.getPlayer().sendMessage(wfr.pluginPrefix + "&6Please switch to survival mode to use &cWorldFall&6.");
+            }
+        } else {
+            // Check if player is not in adventure mode
+            if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+                // Notify player that they are not in adventure mode
+                event.getPlayer().sendMessage(wfr.pluginPrefix + "&6You are not in adventure mode. &cWorldFall &6will not work for you.");
+                event.getPlayer().sendMessage(wfr.pluginPrefix + "&6Please switch to adventure mode to use &cWorldFall&6.");
+            }
+        }
+
         playerHasMoved.put(getPlayerName(event.getPlayer()), false);
     }
 }

@@ -1,10 +1,11 @@
 scoreboard:
   enabled: true
   ticks: 20
-  title: "WorldFall"
+  title: '&l&k[&r&6&lWorldFall&r&l&k]&r'
   text:
-    - "Player: %player_name%"
+    - "&6Player: &a%player_name%"
     - ""
-    - "X: %coord_x%"
-    - "Y: %coord_y%"
-    - "Z: %coord_z%"
+    - "&6X: &a%coord_x%"
+    - "&6Y: &a%coord_y%"
+    - "&6Z: &a%coord_z%"
+    - "&6Status: &a%wf_status%"

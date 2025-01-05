@@ -1,6 +1,8 @@
 package dev.tr25.worldfall.commands;
 
 import dev.tr25.worldfall.WorldFall;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -45,7 +47,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         /* Command sender is Console */
         if (!(commandSender instanceof Player)) {
-            Bukkit.getLogger().info(wfr.pluginName+"\u001B[31mCommand not available in Console!\u001B[37m");
+            if (Bukkit.getLogger().isLoggable(java.util.logging.Level.INFO)) Bukkit.getLogger().info(wfr.pluginName + "\u001B[31mCommand not available in Console!\u001B[37m");
             return false;
         }
 
@@ -126,7 +128,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
      * @param player The player to whom the status message will be sent.
      */
     private void displayStatus(Player player) {
-        player.sendMessage(wfr.pluginPrefix + "WorldFall Status: " + (wfr.wfActive ? "§a§lACTIVE" : "§c§lINACTIVE"));
+        player.sendMessage(wfr.pluginPrefix + "WorldFall Status: " + (wfr.isWfActive() ? "§a§lACTIVE" : "§c§lINACTIVE"));
     }
 
     /**
@@ -154,7 +156,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (wfr.wfStarted()) {
+        if (wfr.isWfActive()) {
             player.sendMessage(wfr.pluginPrefix + "§6WorldFall already started!");
             return;
         }
@@ -180,13 +182,13 @@ public class MainWF implements CommandExecutor, TabCompleter {
             player.sendMessage(wfr.pluginPrefix + "§6Previous start task cancelled!");
         }
 
-        Bukkit.broadcastMessage(wfr.pluginPrefix + "§6WorldFall starting in §b" + time + " seconds");
+        Bukkit.getServer().broadcast(Component.text(wfr.pluginPrefix + "§6WorldFall starting in §b" + time + " seconds"));
         startTask = Bukkit.getScheduler().runTaskLater(wfr, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getGameMode() == GameMode.ADVENTURE) p.setGameMode(GameMode.SURVIVAL);
             }
-            wfr.wfActive = true;
-            Bukkit.broadcastMessage(wfr.pluginPrefix + "§aWorldFall started!");
+            wfr.setWfActive(true);
+            Bukkit.getServer().broadcast(Component.text(wfr.pluginPrefix + "§aWorldFall started!"));
         }, time * 20L);
     }
 
@@ -196,7 +198,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (!wfr.wfStarted()) {
+        if (!wfr.isWfActive()) {
             player.sendMessage(wfr.pluginPrefix + "§4WorldFall not active. Use §b/worldfall start §4to start.");
             return;
         }
@@ -205,8 +207,8 @@ public class MainWF implements CommandExecutor, TabCompleter {
             if (p.getGameMode() == GameMode.SURVIVAL) p.setGameMode(GameMode.ADVENTURE);
         }
 
-        wfr.wfActive = false;
-        Bukkit.broadcastMessage(wfr.pluginPrefix + "§aWorldFall stopped! You may now relax (for now)");
+        wfr.setWfActive(false);
+        Bukkit.getServer().broadcast(Component.text(wfr.pluginPrefix + "§aWorldFall stopped! You may now relax (for now)"));
     }
 
     private void reloadConfig(Player player) {
@@ -259,7 +261,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
         if (args.length > 1 && args[1].equalsIgnoreCase("confirm")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 GameMode gm = p.getGameMode();
-                if (gm != GameMode.ADVENTURE && (!wfr.wfStarted() || gm != GameMode.SURVIVAL)) continue;
+                if (gm != GameMode.ADVENTURE && (!wfr.isWfActive() || gm != GameMode.SURVIVAL)) continue;
                 p.addPotionEffects(List.of(
                         new PotionEffect(PotionEffectType.SLOW, 1000, 255),
                         new PotionEffect(PotionEffectType.BLINDNESS, 1000, 255)

@@ -12,7 +12,7 @@
     <name>WorldFall</name>
 
     <properties>
-        <java.version>14</java.version>
+        <java.version>23</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

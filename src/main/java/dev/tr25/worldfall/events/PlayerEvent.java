@@ -43,34 +43,51 @@ public class PlayerEvent implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         String name = getPlayerName(event.getPlayer());
-        /* WorldFall active in the server */
         if (wfr.isWfActive()) {
-            int fromX = event.getFrom().getBlockX();
-            int fromZ = event.getFrom().getBlockZ();
-
-            int toX = event.getTo().getBlockX();
-            int toZ = event.getTo().getBlockZ();
-            boolean hasMoved = (fromX != toX) | (fromZ != toZ);
-
-            /* Player changed position */
-            if (hasMoved) {
-                if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-                    World world = event.getPlayer().getWorld();
-                    for (int i = -64; i < 320; i++) {
-                        Block block = world.getBlockAt(fromX, i, fromZ);
-                        if (block.getType() != Material.END_PORTAL_FRAME) {
-                            block.setType(Material.AIR);
-                        }
-                    }
-                }
-                playerHasMoved.put(name, true);
-            } else {
-                playerHasMoved.put(name, false);
-            }
+            handlePlayerMovement(event, name);
         } else {
             playerHasMoved.put(name, false);
         }
+    }
 
+    /**
+     * Handles the player movement event.
+     *
+     * @param event the player move event
+     * @param name the name of the player
+     */
+    private void handlePlayerMovement(PlayerMoveEvent event, String name) {
+        int fromX = event.getFrom().getBlockX();
+        int fromZ = event.getFrom().getBlockZ();
+        int toX = event.getTo().getBlockX();
+        int toZ = event.getTo().getBlockZ();
+        boolean hasMoved = (fromX != toX) | (fromZ != toZ);
+
+        if (hasMoved) {
+            if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+                clearBlocks(event.getPlayer().getWorld(), fromX, fromZ);
+            }
+            playerHasMoved.put(name, true);
+        } else {
+            playerHasMoved.put(name, false);
+        }
+    }
+
+    /**
+     * Clears blocks in a vertical column from y = -64 to y = 319 at the specified x and z coordinates in the given world.
+     * If a block is not an END_PORTAL_FRAME, it will be replaced with AIR.
+     *
+     * @param world the world in which the blocks are to be cleared
+     * @param fromX the x-coordinate of the column to be cleared
+     * @param fromZ the z-coordinate of the column to be cleared
+     */
+    private void clearBlocks(World world, int fromX, int fromZ) {
+        for (int i = -64; i < 320; i++) {
+            Block block = world.getBlockAt(fromX, i, fromZ);
+            if (block.getType() != Material.END_PORTAL_FRAME) {
+                block.setType(Material.AIR);
+            }
+        }
     }
 
     /**

@@ -44,7 +44,7 @@ public class PlayerEvent implements Listener {
     public void onMove(PlayerMoveEvent event) {
         String name = getPlayerName(event.getPlayer());
         /* WorldFall active in the server */
-        if (wfr.wfStarted()) {
+        if (wfr.isWfActive()) {
             int fromX = event.getFrom().getBlockX();
             int fromZ = event.getFrom().getBlockZ();
 
@@ -89,7 +89,7 @@ public class PlayerEvent implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Check if plugin is active
-        if (wfr.wfStarted()) {
+        if (wfr.isWfActive()) {
             // Check if player is not in survival mode
             if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
                 // Notify player that they are not in survival mode

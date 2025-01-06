@@ -3,6 +3,7 @@
 
 [![Latest](https://img.shields.io/github/v/release/Bartolumiu/WorldFall)](RELEASE)
 [![GPL-3.0](https://img.shields.io/github/license/Bartolumiu/WorldFall?&logo=github)](LICENSE)
+[![CodeFactor](https://www.codefactor.io/repository/github/bartolumiu/worldfall/badge/paper)](https://www.codefactor.io/repository/github/bartolumiu/worldfall/overview/paper)
 # WorldFall plugin
 
 Every time a player in survival mode moves to another block, the previous column disappears.

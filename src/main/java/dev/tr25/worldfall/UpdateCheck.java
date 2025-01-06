@@ -5,7 +5,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
@@ -17,7 +18,7 @@ import java.net.URI;
  */
 public class UpdateCheck {
     private final WorldFall wfr;
-    private final String modrinthURL = "https://api.modrinth.com/v3/project/BKZW4ASv/version";
+    private static final String MODRINTH_URL = "https://api.modrinth.com/v3/project/BKZW4Asv/version";
 
     /**
      * Constructor
@@ -38,7 +39,7 @@ public class UpdateCheck {
             String currentVersion = getCurrentVersion();
 
             // Send GET request to Modrinth API
-            URI uri = new URI(modrinthURL);
+            URI uri = new URI(MODRINTH_URL);
             HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
             connection.setRequestMethod("GET");
 
@@ -103,7 +104,7 @@ public class UpdateCheck {
             return true;
         }
 
-        // Split the version numbers into parts
+        // Split version strings into parts
         // Version format: major.minor-platform-env
         // Example: 0.1-spigot-dev
         String[] currentParts = currentVersion.split("-");
@@ -128,13 +129,11 @@ public class UpdateCheck {
         // Compare version numbers
         // Check major version first
         if (latestMajor > currentMajor) {
-            // Example: 2.0 > 1.0
             return true;
         }
 
         // Check minor version if major versions are equal
         if (latestMajor == currentMajor && latestMinor > currentMinor) {
-            // Example: 1.1 > 1.0
             return true;
         }
 
@@ -142,10 +141,9 @@ public class UpdateCheck {
         if (latestMajor == currentMajor && latestMinor == currentMinor) {
             // Check if environment indicates a newer version
             if (currentEnv.equals("dev") && !latestEnv.equals("dev")) {
-                // Example: 1.0-dev < 1.0-release
                 return true;
             }
-            return currentEnv.equals("beta") && latestEnv.equals("release");
+            return (currentEnv.equals("beta") && latestEnv.equals("release"));
         }
 
         return false;
@@ -154,12 +152,12 @@ public class UpdateCheck {
     /**
      * Get the latest version of the plugin.
      * @param platform Platform to check for updates (e.g. spigot, fabric)
-     * @return latest version
+     * @return Latest version
      */
     public String getLatestVersion(String platform) {
         try {
             // Send a GET request to the Modrinth API
-            URI uri = new URI(modrinthURL);
+            URI uri = new URI(MODRINTH_URL);
             HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
             connection.setRequestMethod("GET");
 
@@ -198,7 +196,7 @@ public class UpdateCheck {
             return latestVersion;
         } catch (Exception e) {
             Bukkit.getLogger().warning("Failed to get the latest version from Modrinth.");
-            Bukkit.getLogger().warning("Error: "+e.getMessage());
+            Bukkit.getLogger().warning("Error: " + e.getMessage());
             return null;
         }
     }

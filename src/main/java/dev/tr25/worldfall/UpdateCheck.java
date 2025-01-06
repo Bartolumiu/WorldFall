@@ -45,9 +45,10 @@ public class UpdateCheck {
 
             // Check response code
             if (connection.getResponseCode() != 200) {
-                wfr.getLogger().warning("Failed to check updates, Modrinth returned "+connection.getResponseCode());
+                wfr.getLogger().warning("Failed to check updates, Modrinth returned " + connection.getResponseCode());
                 return false;
             }
+
             // Read response
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder response = new StringBuilder();
@@ -76,7 +77,7 @@ public class UpdateCheck {
             // Compare latest version with current version
             return isNewerVersion(currentVersion, latestVersion);
         } catch (Exception e) {
-            wfr.getLogger().warning("Failed to check updates: "+e.getMessage());
+            wfr.getLogger().warning("Failed to check for updates: " + e.getMessage());
             return false;
         }
     }
@@ -102,6 +103,7 @@ public class UpdateCheck {
         if (latestVersion == null) {
             return true;
         }
+
         // Split version strings into parts
         // Version format: major.minor-platform-env
         // Example: 0.1-paper-dev
@@ -124,24 +126,24 @@ public class UpdateCheck {
         int latestMajor = Integer.parseInt(latestVersionNums[0]);
         int latestMinor = Integer.parseInt(latestVersionNums[1]);
 
-        // Compare versions
+        // Compare version numbers
         // Check major version first
         if (latestMajor > currentMajor) {
             return true;
         }
+
         // Check minor version if major versions are equal
         if (latestMajor == currentMajor && latestMinor > currentMinor) {
             return true;
         }
+
         // Check environment if minor versions are equal
         if (latestMajor == currentMajor && latestMinor == currentMinor) {
             // Check if environment indicates a newer version
             if (currentEnv.equals("dev") && !latestEnv.equals("dev")) {
                 return true;
             }
-            if (currentEnv.equals("beta") && latestEnv.equals("release")) {
-                return true;
-            }
+            return (currentEnv.equals("beta") && latestEnv.equals("release"));
         }
 
         return false;

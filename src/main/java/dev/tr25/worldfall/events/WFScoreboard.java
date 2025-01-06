@@ -29,8 +29,8 @@ public class WFScoreboard {
     }
 
     public void createScoreboard (int tickReload) {
-        BukkitScheduler schedule = Bukkit.getServer().getScheduler();
-        taskID = schedule.scheduleSyncRepeatingTask(wfr, () -> {
+        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+        taskID = scheduler.scheduleSyncRepeatingTask(wfr, () -> {
             FileConfiguration config = wfr.getConfig();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 updateScoreboard(player, config);

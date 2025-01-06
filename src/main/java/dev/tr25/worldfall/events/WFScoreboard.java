@@ -24,10 +24,20 @@ public class WFScoreboard {
     private final WorldFall wfr;
     int taskID;
 
+    /**
+     * Constructor for the WFScoreboard class.
+     *
+     * @param wfr An instance of the WorldFall class.
+     */
     public WFScoreboard(WorldFall wfr) {
         this.wfr = wfr;
     }
 
+    /**
+     * Creates a repeating task that updates the scoreboard for all online players at a specified interval.
+     *
+     * @param tickReload The interval in ticks between each scoreboard update.
+     */
     public void createScoreboard (int tickReload) {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         taskID = scheduler.scheduleSyncRepeatingTask(wfr, () -> {
@@ -38,6 +48,12 @@ public class WFScoreboard {
         }, 0, tickReload);
     }
 
+    /**
+     * Updates the scoreboard for the specified player based on the provided configuration.
+     *
+     * @param player The player whose scoreboard will be updated
+     * @param config The configuration containing scoreboard settings
+     */
     public void updateScoreboard(Player player, FileConfiguration config) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = manager.getNewScoreboard();
@@ -82,6 +98,18 @@ public class WFScoreboard {
         player.setScoreboard(scoreboard);
     }
 
+    /**
+     * Parses the given raw text using MiniMessage and LegacyComponentSerializer.
+     * 
+     * This method first deserializes the raw text using the LegacyComponentSerializer,
+     * then serializes it using MiniMessage, removing any backslashes from the resulting string.
+     * Finally, it deserializes the cleaned string back into a Component using MiniMessage.
+     *
+     * @param rawText The raw text to be parsed
+     * @param miniMessage The MiniMessage instance used for serialization and deserialization
+     * @param legacySerializer The LegacyComponentSerializer instance used for initial deserialization
+     * @return The parsed Component
+     */
     private Component parseText(String rawText, MiniMessage miniMessage, LegacyComponentSerializer legacySerializer) {
         Component legacy = legacySerializer.deserialize(rawText);
         String mmString = miniMessage.serialize(legacy).replace("\\", "");

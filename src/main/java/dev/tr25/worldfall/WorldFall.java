@@ -44,7 +44,7 @@ public final class WorldFall extends JavaPlugin {
 
             // Plugin startup logic
             Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
-            Bukkit.getLogger().info("\u001B[33m"+pluginName + " \u001B[32m(version " + version + ")\u001B[37m");
+            Bukkit.getLogger().info("\u001B[33m" + pluginName + " \u001B[32m(version " + version + ")\u001B[37m");
             Bukkit.getLogger().info("\u001B[32mCreated by: " + pdf.getAuthors().get(0) + "\u001B[37m");
             Bukkit.getLogger().info("\u001B[32mWebsite: " + pdf.getWebsite() + "\u001B[37m");
             Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
@@ -83,7 +83,7 @@ public final class WorldFall extends JavaPlugin {
                 } else Bukkit.getLogger().info(pluginName + " > No updates available. You are using the latest version.");
             } catch (Exception e) {
                 Bukkit.getLogger().info(pluginName + " > An error occurred while checking for updates.");
-                Bukkit.getLogger().info(pluginName + " > Please check your internet connection or check manually in the following URL:");
+                Bukkit.getLogger().info(pluginName + " > Please check your Internet connection or check manually in the following URL:");
                 Bukkit.getLogger().info(pluginName + " > https://modrinth.com/plugin/WorldFall");
                 Bukkit.getLogger().warning(pluginName + " > Error message: " + e.getMessage());
             }

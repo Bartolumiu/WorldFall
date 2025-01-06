@@ -45,9 +45,9 @@ public class WFScoreboard {
         LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
 
         if (config.getBoolean("scoreboard.enabled")) {
-            // Parse title with MiniMessage
+            // Parse title with both Legacy and MiniMessage parsers
             String titleRaw = config.getString("scoreboard.title", "&l&k[&r&6&lWorldFall&r&l&k]&r");
-            Component title = miniMessage.deserialize(legacySerializer.serialize(legacySerializer.deserialize(titleRaw)));
+            Component title = parseText(titleRaw, miniMessage, legacySerializer);
 
             // Register objective
             Objective objective = scoreboard.registerNewObjective("WorldFall", Criteria.DUMMY, title, RenderType.INTEGER);
@@ -67,18 +67,24 @@ public class WFScoreboard {
                     .replace("%coord_x%", nf.format(x))
                     .replace("%coord_y%", nf.format(y))
                     .replace("%coord_z%", nf.format(z))
-                    .replace("%wf_status%", (wfr.isWfActive() ? "<green><b>ACTIVE</b></green>" : "<red><b>INACTIVE</b></red>"))
+                    .replace("%wf_status%", (wfr.isWfActive() ? "<green><bold>ACTIVE</bold></green>" : "<red><bold>INACTIVE</bold></red>"))
                     .replace("%player_name%", player.getName());
 
-                // Process legacy color codes (e.g. &a, &l) and MiniMessage tags
-                Component lineComponent = miniMessage.deserialize(legacySerializer.serialize(legacySerializer.deserialize(rawLine)));
+                Component lineComponent = parseText(rawLine, miniMessage, legacySerializer);
+                String lineString = legacySerializer.serialize(lineComponent).replace('&', '§');
 
                 // Add line to scoreboard
-                Score score = objective.getScore(legacySerializer.serialize(lineComponent));
+                Score score = objective.getScore(lineString);
                 score.setScore(lines.size() - (i));
             }
         }
 
         player.setScoreboard(scoreboard);
+    }
+
+    private Component parseText(String rawText, MiniMessage miniMessage, LegacyComponentSerializer legacySerializer) {
+        Component legacy = legacySerializer.deserialize(rawText);
+        String mmString = miniMessage.serialize(legacy).replace("\\", "");
+        return miniMessage.deserialize(mmString);
     }
 }

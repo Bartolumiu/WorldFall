@@ -17,12 +17,12 @@ import java.io.File;
  * This class is responsible for loading commands, events, and the config file.
  */
 public final class WorldFall extends JavaPlugin {
-    public String configPath;
+    private String configPath;
     final PluginDescriptionFile pdf = getDescription();
     public final String version = pdf.getVersion();
     public final String pluginName = pdf.getName();
-    public final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&k[&r&6&l"+pluginName+"&f&k]&r ");
-    public boolean wfActive = false;
+    public final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&k[&r&6&l" + pluginName + "&f&k]&r");
+    private boolean wfActive = false;
 
     /**
      * Called when the plugin is enabled.
@@ -30,69 +30,84 @@ public final class WorldFall extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        // bStats connection
-        int pluginID = 19126;
-        Metrics metrics = new Metrics(this, pluginID);
+        if (Bukkit.getLogger().isLoggable(java.util.logging.Level.INFO)) {
+            // bStats connection
+            int pluginID = 19126;
+            new Metrics(this, pluginID);
 
-        // Plugin startup logic
-        Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
-        Bukkit.getLogger().info("\u001B[33m"+pluginName+" \u001B[32m(version "+version+")\u001B[37m");
-        Bukkit.getLogger().info("\u001B[32mCreated by: "+pdf.getAuthors().get(0)+"\u001B[37m");
-        Bukkit.getLogger().info("\u001B[32mWebsite: "+pdf.getWebsite()+"\u001B[37m");
-        Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
-        PluginManager manager = Bukkit.getServer().getPluginManager();
+            // Check if the server is running Spigot
+            if (!Bukkit.getName().equalsIgnoreCase("Spigot")) {
+                Bukkit.getLogger().warning(pluginName + " > This plugin is designed to run on Spigot servers.");
+                Bukkit.getLogger().warning(pluginName + " > Please consider using Spigot for the best experience.");
+            }
 
-        // Register commands and events
-        Bukkit.getLogger().info(pluginName + " > Loading commands.");
-        commandRegister();
+            // Plugin startup logic
+            Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
+            Bukkit.getLogger().info("\u001B[33m" + pluginName + " \u001B[32m(version " + version + ")\u001B[37m");
+            Bukkit.getLogger().info("\u001B[32mCreated by: " + pdf.getAuthors().get(0) + "\u001B[37m");
+            Bukkit.getLogger().info("\u001B[32mWebsite: " + pdf.getWebsite() + "\u001B[37m");
+            Bukkit.getLogger().info("\u001B[32m<-------------------------------------->\u001B[37m");
+            PluginManager manager = Bukkit.getServer().getPluginManager();
 
-        Bukkit.getLogger().info(pluginName + " > Loading events.");
-        manager.registerEvents(new PlayerEvent(this), this);
+            // Register commands and events
+            Bukkit.getLogger().info(pluginName + " > Loading commands.");
+            commandRegister();
 
-        // Load config
-        Bukkit.getLogger().info(pluginName + " > Loading config.");
-        configRegister();
+            Bukkit.getLogger().info(pluginName + " > Loading events.");
+            manager.registerEvents(new PlayerEvent(this), this);
 
-        // Load scoreboard
-        WFScoreboard wfScoreboard = new WFScoreboard(this);
-        String ticksString = getConfig().getString("scoreboard.ticks");
-        if (ticksString == null) {
-            Bukkit.getLogger().info(pluginName + " > Scoreboard ticks not found in config.yml. Using default value.");
-            wfScoreboard.createScoreboard(20);
+            // Load config
+            Bukkit.getLogger().info(pluginName + " > Loading config.");
+            configRegister();
+
+            // Load scoreboard
+            WFScoreboard wfScoreboard = new WFScoreboard(this);
+            String ticksString = getConfig().getString("scoreboard.ticks");
+            if (ticksString == null) {
+                Bukkit.getLogger().info(pluginName + " > Scoreboard ticks not found in config.yml. Using default value.");
+                getConfig().set("scoreboard.ticks", 20);
+                saveConfig();
+                wfScoreboard.createScoreboard(20);
+            } else {
+                int ticks = Integer.parseInt(ticksString);
+                wfScoreboard.createScoreboard(ticks);
+            }
+
+            // Check for updates
+            Bukkit.getLogger().info(pluginName + " > Checking for updates...");
+            try {
+                UpdateCheck update = new UpdateCheck(this);
+                if (update.isUpdateAvailable("spigot")) {
+                    Bukkit.getLogger().info(pluginName + " > An update is available in Modrinth!");
+                } else Bukkit.getLogger().info(pluginName + " > No updates available. You are using the latest version.");
+            } catch (Exception e) {
+                Bukkit.getLogger().info(pluginName + " > An error occurred while checking for updates.");
+                Bukkit.getLogger().info(pluginName + " > Please check your Internet connection or check manually in the following URL:");
+                Bukkit.getLogger().info(pluginName + " > https://modrinth.com/plugin/WorldFall");
+                Bukkit.getLogger().warning(pluginName + " > Error message: " + e.getMessage());
+            }
+
+            // Notify that the plugin has been loaded successfully
+            Bukkit.getLogger().info(pluginName+" > Plugin loaded successfully!");
         } else {
-            int ticks = Integer.parseInt(ticksString);
-            wfScoreboard.createScoreboard(ticks);
+            Bukkit.getLogger().warning(pluginName + " > This plugin requires INFO level logging to work properly.");
+            Bukkit.getLogger().warning(pluginName + " > Please change the logging level in your server.properties file.");
         }
-
-        // Check for updates
-        Bukkit.getLogger().info(pluginName + " > Checking for updates...");
-        try {
-            UpdateCheck update = new UpdateCheck(this);
-            if (update.isUpdateAvailable("spigot")) {
-                Bukkit.getLogger().info(pluginName + " > An update is available in Modrinth!");
-            } else Bukkit.getLogger().info(pluginName + " > No updates available. You are using the latest version.");
-        } catch (Exception e) {
-            Bukkit.getLogger().info(pluginName + " > An error occurred while checking for updates.");
-            Bukkit.getLogger().info(pluginName + " > Please check your Internet connection or check manually in the following URL:");
-            Bukkit.getLogger().info(pluginName + " > https://modrinth.com/plugin/WorldFall");
-            Bukkit.getLogger().warning(pluginName + " > Error message: " + e.getMessage());
-        }
-
-        // Notify that the plugin has been loaded successfully
-        Bukkit.getLogger().info(pluginName + " > Plugin loaded successfully!");
     }
 
     /**
      * Called when the plugin is disabled.
-     * This method is called when the server is shutting down or the plugin is being reloaded.
+     * This method notifies the user that the plugin is shutting down.
      */
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-        Bukkit.getLogger().info("<--------------------------------------------->");
-        Bukkit.getLogger().info("Shutting down "+pluginName+" (version "+version+")");
-        Bukkit.getLogger().info("Thank you for using this plugin!");
-        Bukkit.getLogger().info("<--------------------------------------------->");
+        if (Bukkit.getLogger().isLoggable(java.util.logging.Level.INFO)) {
+            // Plugin shutdown logic
+            Bukkit.getLogger().info("<--------------------------------------------->");
+            Bukkit.getLogger().info("Shutting down " + pluginName + " (version " + version + ")");
+            Bukkit.getLogger().info("Thank you for using this plugin!");
+            Bukkit.getLogger().info("<--------------------------------------------->");
+        }
     }
 
     /**
@@ -105,10 +120,18 @@ public final class WorldFall extends JavaPlugin {
 
     /**
      * Check if the WorldFall game has started.
-     * @return true if the game has started, false otherwise
+     * @return true if the game has started, false otherwise.
      */
-    public boolean wfStarted() {
+    public boolean isWfActive() {
         return wfActive;
+    }
+
+    /**
+     * Set the status of the WorldFall game.
+     * @param wfActive true if the game has started, false otherwise.
+     */
+    public void setWfActive(boolean wfActive) {
+        this.wfActive = wfActive;
     }
 
     /**
@@ -118,9 +141,17 @@ public final class WorldFall extends JavaPlugin {
         File config = new File(this.getDataFolder(), "config.yml");
         configPath = config.getPath();
         if (!config.exists()) {
-            Bukkit.getLogger().info(pluginPrefix+"config.yml not found. Generating new one!");
+            if (Bukkit.getLogger().isLoggable(java.util.logging.Level.INFO)) Bukkit.getLogger().info(pluginName + " > config.yml not found. Generating new one!");
             this.getConfig().options().copyDefaults(true);
             saveConfig();
         }
+    }
+
+    /**
+     * Get the path to the config file.
+     * @return Path to the config file.
+     */
+    public String getConfigPath() {
+        return configPath;
     }
 }

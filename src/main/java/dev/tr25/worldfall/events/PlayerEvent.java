@@ -64,7 +64,7 @@ public class PlayerEvent implements Listener {
         int fromZ = event.getFrom().getBlockZ();
         int toX = event.getTo().getBlockX();
         int toZ = event.getTo().getBlockZ();
-        boolean hasMoved = (fromX != toX) | (fromZ != toZ);
+        boolean hasMoved = (fromX != toX) || (fromZ != toZ);
 
         if (hasMoved) {
             if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {

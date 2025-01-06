@@ -4,6 +4,7 @@ import dev.tr25.worldfall.commands.MainWF;
 import dev.tr25.worldfall.events.PlayerEvent;
 import dev.tr25.worldfall.events.WFScoreboard;
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bstats.bukkit.Metrics;
@@ -22,7 +23,7 @@ public final class WorldFall extends JavaPlugin {
     final PluginMeta pdf = getPluginMeta();
     public final String version = pdf.getVersion();
     public final String pluginName = pdf.getName();
-    public final String pluginPrefix = MiniMessage.miniMessage().deserialize("<k>[<r><gold><bold>" + pluginName + "<white><k>]<r>").toString();
+    public final Component pluginPrefix = MiniMessage.miniMessage().deserialize("<obfuscated>[<reset><gold><bold>" + pluginName + "<reset><obfuscated>]<reset> ");
     private boolean wfActive = false;
 
     /**

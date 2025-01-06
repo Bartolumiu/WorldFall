@@ -45,7 +45,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         /* Command sender is Console */
         if (!(commandSender instanceof Player player)) {
-            if (Bukkit.getLogger().isLoggable(java.util.logging.Level.INFO)) Bukkit.getLogger().info(wfr.pluginName + "\u001B[31mCommand not available in Console!\u001B[37m");
+            if (Bukkit.getLogger().isLoggable(java.util.logging.Level.INFO)) Bukkit.getLogger().info(wfr.pluginName + "\u001B[31m > Command not available in Console!\u001B[37m");
             return false;
         }
 
@@ -63,7 +63,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
             case "reload" -> reloadConfig(player);
             case "scoreboard" -> handleScoreboard(player, args);
             case "tp" -> teleportPlayers(player, args);
-            default -> player.sendMessage(wfr.pluginPrefix + "§4Unknown command. Use §6/worldfall cmd §4for a list of commands");
+            default -> sendMessage(player, "§4Unknown command. Use §6/worldfall cmd §4for a list of commands");
         }
 
         return true;
@@ -72,7 +72,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
     /**
      * Displays information about the WorldFall plugin to the specified player.
      *
-     * @param player the player to whom the information will be displayed
+     * @param player The player to whom the information will be displayed
      */
     private void displayInfo(Player player) {
         sendMessage(player, String.join("\n",
@@ -87,9 +87,9 @@ public class MainWF implements CommandExecutor, TabCompleter {
 
     /**
      * Displays a list of available commands to the specified player.
-     * The list includes commands that the player has permission to use.
+     * The list of commands is based on the permissions of the player.
      *
-     * @param player the player to whom the command list will be displayed
+     * @param player The player to whom the command list will be displayed
      */
     private void displayCommandList(Player player) {
         List<String> commands = new ArrayList<>(List.of(
@@ -107,32 +107,32 @@ public class MainWF implements CommandExecutor, TabCompleter {
         if (hasPermission(player, "wf.config.scoreboard.disable")) commands.add("§6/worldfall scoreboard disable§a: Disables the sidebar");
         if (hasPermission(player, "wf.action.tp")) commands.add("§6/worldfall tp§a: Teleport all players to you");
         commands.add("§6---------------------------------");
-        
+
         sendMessage(player, String.join("\n", commands));
     }
 
     /**
      * Sends a message to the specified player displaying the current version of the WorldFall plugin.
      *
-     * @param player the player to whom the version message will be sent
+     * @param player The player to whom the version message will be sent
      */
     private void displayVersion(Player player) {
-        sendMessage(player, wfr.pluginPrefix + "WorldFall for Paper (version " + wfr.version + ")");
+        sendMessage(player, "WorldFall for Paper (version " + wfr.version + ")");
     }
 
     /**
      * Displays the current status of the WorldFall plugin to the specified player.
      *
-     * @param player The player to whom the status message will be sent.
+     * @param player The player to whom the status message will be sent
      */
     private void displayStatus(Player player) {
-        sendMessage(player, wfr.pluginPrefix + "WorldFall Status: " + (wfr.isWfActive() ? "§a§lACTIVE" : "§c§lINACTIVE"));
+        sendMessage(player, "WorldFall Status: " + (wfr.isWfActive() ? "§a§lACTIVE" : "§c§lINACTIVE"));
     }
 
     /**
-     * Starts the WorldFall event for the specified player.
-     * 
-     * @param player The player who initiated the command.
+     * Starts the WorldFall game with a specified time delay.
+     *
+     * @param player The player who initiated the command
      * @param args   The command arguments. The second argument (if present) specifies the countdown time in seconds.
      */
     private void startWorldFall(Player player, String[] args) {
@@ -154,9 +154,9 @@ public class MainWF implements CommandExecutor, TabCompleter {
      * If the time argument is not provided, returns a default value of 5.
      * If the time argument is invalid or negative, sends an error message to the player and returns -1.
      *
-     * @param args   the command arguments
-     * @param player the player executing the command
-     * @return the parsed time, or -1 if the time is invalid, or 5 if no time argument is provided
+     * @param args The command arguments
+     * @param player The player executing the command
+     * @return The parsed time, or -1 if the time is invalid, or 5 if no time argument is provided
      */
     private int parseTime(String[] args, Player player) {
         if (args.length > 1) {
@@ -165,7 +165,7 @@ public class MainWF implements CommandExecutor, TabCompleter {
                 if (time < 0) throw new IllegalArgumentException("Negative time");
                 return time;
             } catch (Exception e) {
-                sendMessage(player, "§4Invalid time format!");
+                sendMessage(player, "§4Invalid time argument. Please provide a positive integer.");
                 return -1;
             }
         }
@@ -177,29 +177,32 @@ public class MainWF implements CommandExecutor, TabCompleter {
      * This method checks if the start task is not null and cancels it.
      */
     private void cancelPreviousStartTask() {
-        if (startTask != null) startTask.cancel();
+        if (startTask != null) {
+            startTask.cancel();
+            startTask = null;
+        }
     }
 
     /**
      * Schedules a task to start the WorldFall game after a specified delay.
-     * 
-     * @param time The delay in seconds before the WorldFall game starts.
+     *
+     * @param time The time delay in seconds
      */
     private void scheduleStartTask(int time) {
-        Bukkit.getServer().broadcast(Component.text(wfr.pluginPrefix + "§6WorldFall starting in §b" + time + " seconds"));
+        Bukkit.getServer().broadcast(wfr.pluginPrefix.append(Component.text("§6WorldFall starting in §b" + time + " seconds")));
         startTask = Bukkit.getScheduler().runTaskLater(wfr, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getGameMode() == GameMode.ADVENTURE) p.setGameMode(GameMode.SURVIVAL);
             }
             wfr.setWfActive(true);
-            Bukkit.getServer().broadcast(Component.text(wfr.pluginPrefix + "§aWorldFall started!"));
+            Bukkit.getServer().broadcast(wfr.pluginPrefix.append(Component.text("§aWorldFall started!")));
         }, time * 20L);
     }
 
     /**
-     * Stops the WorldFall event for the given player if they have the necessary permission.
-     * 
-     * @param player The player attempting to stop the WorldFall event.
+     * Stops WorldFall.
+     *
+     * @param player The player who initiated the command
      */
     private void stopWorldFall(Player player) {
         if (!hasPermission(player, "wf.action.stop")) return;
@@ -213,13 +216,13 @@ public class MainWF implements CommandExecutor, TabCompleter {
         }
 
         wfr.setWfActive(false);
-        Bukkit.getServer().broadcast(Component.text(wfr.pluginPrefix + "§aWorldFall stopped! You may now relax (for now)"));
+        Bukkit.getServer().broadcast(wfr.pluginPrefix.append(Component.text("§aWorldFall stopped! You may now relax (for now)")));
     }
 
     /**
-     * Reloads the configuration for the player if they have the appropriate permission.
+     * Reloads the WorldFall plugin configuration.
      *
-     * @param player the player who initiated the reload command
+     * @param player The player who initiated the command
      */
     private void reloadConfig(Player player) {
         if (!hasPermission(player, "wf.config.reload")) return;
@@ -228,15 +231,12 @@ public class MainWF implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Handles the scoreboard command for a player.
-     * 
-     * @param player The player executing the command.
-     * @param args The arguments passed with the command.
-     * 
-     * This method checks if the correct number of arguments are provided.
-     * If not, it sends a usage message to the player. If the correct arguments
-     * are provided, it enables or disables the scoreboard based on the argument.
-     * Valid arguments are "enable" and "disable".
+     * Handles the scoreboard command.
+     * This method enables or disables the scoreboard based on the specified argument.
+     *
+     * @param player The player executing the command
+     * @param args The arguments passed with the command
+     * @see #toggleScoreboard(Player, boolean)
      */
     private void handleScoreboard(Player player, String[] args) {
         if (args.length < 2) {
@@ -247,15 +247,15 @@ public class MainWF implements CommandExecutor, TabCompleter {
         switch (args[1].toLowerCase()) {
             case "enable" -> toggleScoreboard(player, true);
             case "disable" -> toggleScoreboard(player, false);
-            default -> player.sendMessage(wfr.pluginPrefix + "§4Usage: §6/worldfall scoreboard <enable|disable>");
+            default -> sendMessage(player, "§4Usage: §6/worldfall scoreboard <enable|disable>");
         }
     }
 
     /**
-     * Toggles the scoreboard for the specified player.
+     * Toggle the scoreboard based on the specified enable flag.
      *
-     * @param player the player for whom the scoreboard is being toggled
-     * @param enable true to enable the scoreboard, false to disable it
+     * @param player The player executing the command
+     * @param enable The flag to enable or disable the scoreboard
      */
     private void toggleScoreboard(Player player, boolean enable) {
         String permission = enable ? "wf.config.scoreboard.enable" : "wf.config.scoreboard.disable";
@@ -273,10 +273,13 @@ public class MainWF implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Teleports all eligible players to the specified player if the command is confirmed.
-     * 
-     * @param player The player who issued the teleport command.
-     * @param args The command arguments. If the second argument is "confirm", the teleportation is executed.
+     * Teleports all eligible players to the command sender.
+     * Eligible players are those in survival mode when WorldFall is active or adventure mode when WorldFall is inactive.
+     * The command sender must confirm the teleportation by typing "/worldfall tp confirm".
+     * If the confirmation argument is not provided, a confirmation message is sent to the command sender.
+     *
+     * @param player The player executing the command
+     * @param args The command arguments. The second argument (if present) should be "confirm" to confirm teleportation
      */
     private void teleportPlayers(Player player, String[] args) {
         if (!hasPermission(player, "wf.action.tp")) return;
@@ -285,11 +288,11 @@ public class MainWF implements CommandExecutor, TabCompleter {
                 GameMode gm = p.getGameMode();
                 if (gm != GameMode.ADVENTURE && (!wfr.isWfActive() || gm != GameMode.SURVIVAL)) continue;
                 p.teleport(player);
-                sendMessage(p, "§aTeleported to " + player.getName() + "!");
+                sendMessage(p, "§6Teleported to §b" + player.getName() + "!");
             }
         } else {
             sendMessage(player, "§6Are you sure you want to teleport all players to you?");
-            sendMessage(player, "§6Type §b/worldfall tp confirm §6to confirm");
+            sendMessage(player, "§6Type §b/worldfall tp confirm §6to confirm.");
         }
     }
 
@@ -298,9 +301,9 @@ public class MainWF implements CommandExecutor, TabCompleter {
      * If the player does not have the permission, a message is sent to the player
      * indicating that they do not have permission to use the command.
      *
-     * @param player The player whose permissions are being checked.
-     * @param permission The permission string to check against the player's permissions.
-     * @return true if the player has the specified permission, false otherwise.
+     * @param player The player whose permissions are being checked
+     * @param permission The permission string to check against the player's permissions
+     * @return True if the player has the specified permission, false otherwise
      */
     private boolean hasPermission(Player player, String permission) {
         if (!player.hasPermission(permission)) {
@@ -313,16 +316,16 @@ public class MainWF implements CommandExecutor, TabCompleter {
     /**
      * Sends a message to the specified player with the plugin's prefix.
      *
-     * @param player the player to send the message to
-     * @param message the message to be sent
+     * @param player The player to send the message to
+     * @param message The message to be sent
      */
     private void sendMessage(Player player, String message) {
-        player.sendMessage(wfr.pluginPrefix + message);
+        player.sendMessage(wfr.pluginPrefix.append(Component.text(message)));
     }
 
     /**
      * Handle tab completion for the main command and its subcommands.
-     * @param commandSender Command sender
+     * @param sender Command sender
      * @param command Command
      * @param label Command label
      * @param args Command arguments
@@ -341,25 +344,25 @@ public class MainWF implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Adds the main command options to the provided list based on the sender's permissions.
+     * Adds main command options to the provided list based on the sender's permissions.
      *
-     * @param sender  the command sender whose permissions are checked
-     * @param options the list to which the command options are added
+     * @param sender The command sender
+     * @param options The list of options to add main command options to
      */
     private void addMainCommandOptions(@NotNull CommandSender sender, List<String> options) {
         options.addAll(List.of("cmd", "version", "status"));
         if (sender.hasPermission("wf.action.start")) options.add("start");
         if (sender.hasPermission("wf.action.stop")) options.add("stop");
         if (sender.hasPermission("wf.config.reload")) options.add("reload");
-        if ((sender.hasPermission("wf.config.scoreboard.enable")) || sender.hasPermission("wf.config.scoreboard.disable")) options.add("scoreboard");
+        if (sender.hasPermission("wf.config.scoreboard.enable") || sender.hasPermission("wf.config.scoreboard.disable")) options.add("scoreboard");
         if (sender.hasPermission("wf.action.tp")) options.add("tp");
     }
 
     /**
      * Adds scoreboard options to the provided list based on the sender's permissions.
      *
-     * @param sender  the command sender whose permissions are checked
-     * @param options the list to which scoreboard options will be added
+     * @param sender The command sender
+     * @param options The list of options to add scoreboard options to
      */
     private void addScoreboardOptions(@NotNull CommandSender sender, List<String> options) {
         if (sender.hasPermission("wf.config.scoreboard.enable")) options.add("enable");
@@ -369,9 +372,9 @@ public class MainWF implements CommandExecutor, TabCompleter {
     /**
      * Filters a list of options to include only those that start with the given input string.
      *
-     * @param input The input string to filter options by. The comparison is case-insensitive.
-     * @param options The list of options to filter.
-     * @return A list of options that start with the input string.
+     * @param input The input string to filter options by. The comparison is case-insensitive
+     * @param options The list of options to filter
+     * @return A list of options that start with the input string
      */
     private List<String> filterOptions(String input, List<String> options) {
         return options.stream().filter(opt -> opt.startsWith(input.toLowerCase())).toList();

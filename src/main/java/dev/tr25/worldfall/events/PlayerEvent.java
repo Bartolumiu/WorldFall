@@ -56,8 +56,8 @@ public class PlayerEvent implements Listener {
     /**
      * Handles the player movement event.
      *
-     * @param event the player move event
-     * @param name the name of the player
+     * @param event The player move event
+     * @param name The name of the player
      */
     private void handlePlayerMovement(PlayerMoveEvent event, String name) {
         int fromX = event.getFrom().getBlockX();
@@ -80,9 +80,9 @@ public class PlayerEvent implements Listener {
      * Clears blocks in a vertical column from y = -64 to y = 319 at the specified x and z coordinates in the given world.
      * If a block is not an END_PORTAL_FRAME, it will be replaced with AIR.
      *
-     * @param world the world in which the blocks are to be cleared
-     * @param fromX the x-coordinate of the column to be cleared
-     * @param fromZ the z-coordinate of the column to be cleared
+     * @param world The world in which the blocks are to be cleared
+     * @param fromX The x-coordinate of the column to be cleared
+     * @param fromZ The z-coordinate of the column to be cleared
      */
     private void clearBlocks(World world, int fromX, int fromZ) {
         for (int i = -64; i < 320; i++) {

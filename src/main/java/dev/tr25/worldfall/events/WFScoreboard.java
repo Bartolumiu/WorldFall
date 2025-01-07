@@ -15,17 +15,17 @@ public class WFScoreboard {
     private final WorldFall wfr;
     int taskID;
 
-    public WFScoreboard (WorldFall wfr) {
+    public WFScoreboard(WorldFall wfr) {
         this.wfr = wfr;
     }
 
     public void createScoreboard (int tickReload) {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         taskID = scheduler.scheduleSyncRepeatingTask(wfr, () -> {
-                FileConfiguration config = wfr.getConfig();
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    updateScoreboard(player, config);
-                }
+            FileConfiguration config = wfr.getConfig();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                updateScoreboard(player, config);
+            }
         }, 0, tickReload);
     }
 
@@ -46,7 +46,12 @@ public class WFScoreboard {
             nf.setMaximumFractionDigits(2);
 
             for (int i = 0; i < lines.size(); i++) {
-                Score score = objective.getScore(ChatColor.translateAlternateColorCodes('&', lines.get(i).replace("%coord_x%", nf.format(x)).replace("%coord_y%", nf.format(y)).replace("%coord_z%", nf.format(z)).replace("%wf_status%", (wfr.wfActive ? "§a§lACTIVE§r" : "§c§lINACTIVE§r")).replace("%player_name%", player.getName())));
+                Score score = objective.getScore(ChatColor.translateAlternateColorCodes('&', lines.get(i)
+                    .replace("%coord_x%", nf.format(x))
+                    .replace("%coord_y%", nf.format(y))
+                    .replace("%coord_z%", nf.format(z))
+                    .replace("%wf_status%", (wfr.isWfActive() ? "§a§lACTIVE§r" : "§c§lINACTIVE§r"))
+                    .replace("%player_name%", player.getName())));
                 score.setScore(lines.size() - (i));
             }
         }

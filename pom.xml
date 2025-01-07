@@ -6,13 +6,13 @@
 
     <groupId>dev.tr25</groupId>
     <artifactId>WorldFall</artifactId>
-    <version>0.1-spigot-dev</version>
+    <version>0.2-spigot-dev</version>
     <packaging>jar</packaging>
 
     <name>WorldFall</name>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>23</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -30,7 +30,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.6.0</version>
                 <!-- bStats Config -->
                 <configuration>
                     <relocations>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -93,6 +93,11 @@
             <artifactId>bstats-bukkit</artifactId>
             <version>3.0.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
         </dependency>
 
     </dependencies>

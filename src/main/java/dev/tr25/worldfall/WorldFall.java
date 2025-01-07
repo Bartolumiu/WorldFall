@@ -41,6 +41,8 @@ public final class WorldFall extends JavaPlugin {
             if (!Bukkit.getName().equalsIgnoreCase("Paper")) {
                 Bukkit.getLogger().warning(pluginName + " > This plugin is designed to run on Paper servers.");
                 Bukkit.getLogger().warning(pluginName + " > Please consider using Paper for the best experience.");
+                Bukkit.getLogger().warning(pluginName + " > The plugin may not work as expected on other server software.");
+                Bukkit.getLogger().warning(pluginName + " > You are currently running a " + Bukkit.getName() + " server.");
             }
 
             // Plugin startup logic

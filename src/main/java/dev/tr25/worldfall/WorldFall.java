@@ -21,7 +21,7 @@ public final class WorldFall extends JavaPlugin {
     final PluginDescriptionFile pdf = getDescription();
     public final String version = pdf.getVersion();
     public final String pluginName = pdf.getName();
-    public final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&k[&r&6&l" + pluginName + "&f&k]&r");
+    public final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&k[&r&6&l" + pluginName + "&f&k]&r ");
     private boolean wfActive = false;
 
     /**
@@ -39,6 +39,8 @@ public final class WorldFall extends JavaPlugin {
             if (!Bukkit.getName().equalsIgnoreCase("Spigot")) {
                 Bukkit.getLogger().warning(pluginName + " > This plugin is designed to run on Spigot servers.");
                 Bukkit.getLogger().warning(pluginName + " > Please consider using Spigot for the best experience.");
+                Bukkit.getLogger().warning(pluginName + " > The plugin may not work as expected on other server software.");
+                Bukkit.getLogger().warning(pluginName + " > You are currently running a " + Bukkit.getName() + " server.");
             }
 
             // Plugin startup logic
